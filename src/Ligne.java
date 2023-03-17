@@ -17,6 +17,35 @@ public class Ligne {
         this.tempsAttenteMoyen = tempsAttenteMoyen;
     }
 
+    public int getTempsAttenteMoyen() {
+        return tempsAttenteMoyen;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+
+    public String getNumero() {
+        return numero;
+    }
+
+
+    public String getPremiereStation() {
+        return premiereStation;
+    }
+
+
+    public String getDestination() {
+        return destination;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+
     @Override
     public String toString() {
         return "Ligne{" +

@@ -11,7 +11,7 @@ public class ListeDAdjacence {
     }
 
     protected void ajouterStation(Station s) {
-        correspondanceStationsTroncons.put(s,new HashSet<>());
+        if(!correspondanceStationsTroncons.containsKey(s)) correspondanceStationsTroncons.put(s,new HashSet<>());
     }
 
     protected void ajouterTroncon(Troncon t) {

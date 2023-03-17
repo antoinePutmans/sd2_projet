@@ -29,4 +29,12 @@ public class Troncon {
     public Station getArrivee() {
         return arrivee;
     }
+
+    public int getDuree() {
+        return duree;
+    }
+
+    public Ligne getLigne() {
+        return ligne;
+    }
 }
