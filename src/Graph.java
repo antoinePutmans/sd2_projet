@@ -37,6 +37,7 @@ public class Graph {
 
     public void calculerCheminMinimisantNombreTroncons(String depart, String arrivee) {
         Station stationDep = new Station(depart);
+        Station stationArr = new Station(arrivee);
         Station stationCourante = stationDep;
         Deque<Station> file = new ArrayDeque<>();
         Set<Station> stationsVisitees = new HashSet<>();
@@ -47,7 +48,9 @@ public class Graph {
 
         while (!file.isEmpty()) {
             stationCourante = file.pollFirst();
+            if (stationCourante.equals(stationArr)) break;
             Set<Troncon> tronconsSortants = listeDAdjacence.tronconsSortants(stationCourante);
+            if (tronconsSortants == null) continue;
             for (Troncon e : tronconsSortants) {
                 if (!stationsVisitees.contains(e.getArrivee())) {
                     stationsVisitees.add(e.getArrivee());
@@ -58,8 +61,10 @@ public class Graph {
         }
 
         // remonter depuis courant jusqu'au depart
+        // need les troncons
         System.out.println(stationCourante.getNom());
         for (int i = 0; i< arriveeSource.size(); i++){
+            if (arriveeSource.get(stationCourante) == null) break;
             System.out.println(arriveeSource.get(stationCourante).getNom());
             stationCourante = arriveeSource.get(stationCourante);
         }
