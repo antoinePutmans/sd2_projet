@@ -27,7 +27,7 @@ public class ListeDAdjacence {
             if (troncon.getArrivee().equals(a2)) return true;
         }
         for (Troncon troncon : correspondanceStationsTroncons.get(a2)) {
-            if (troncon.getArrivee().equals(a2)) return true;
+            if (troncon.getArrivee().equals(a1)) return true;
         }
         return false;
     }
