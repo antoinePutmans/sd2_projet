@@ -1,7 +1,16 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayDeque;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class Graph {
 
@@ -96,14 +105,36 @@ public class Graph {
     // LA REPONSE DE DIJKSTRA
     Station stationDepart = new Station(depart);
     Station stationArrivee = new Station(arrivee);
-    Set<Station> stationsVisitees;
-    int nbStations = stations.size();
-    int plusPetitTpsTransport = Integer.MAX_VALUE;
+    Set<Station> stationsVisitees = new HashSet<>();
 
-    Set<Troncon> sortants = listeDAdjacence.tronconsSortants(stationDepart);
+    Map<Station,Station> arriveeSource = new HashMap<>();
 
-    // utiliser TreeSet ou TreeMap pour faire le tableau de dijkstra
-    //Map<Station,Integer> stationChemin = new TreeMap<>(Comparator.comparing((a,b) -> a.get))
+    Map<Station,Integer> distances = new HashMap<>(); // les distances entre départ et Station...
+    for (Station s : stations){
+      distances.put(s, Integer.MAX_VALUE);
+    }
+    distances.put(stationDepart, 0); // départ cout 0
+
+    Comparator<Station> stationDistanceComparator = (s1, s2) -> {
+      int d1 = distances.get(s1);
+      int d2 = distances.get(s2);
+
+      if (d1 < d2) {
+        return -1;
+      } else if (d1 > d2) {
+        return 1;
+      } else {
+        return s1.getNom().compareTo(s2.getNom()); // en cas d'égalité des distances, le fait par nom de station
+      }
+    };
+
+    // utilisation de treemap pour éviter de reparcourir et trouver distance minimale !
+    TreeMap<Station, Integer> stationsNonVisitees = new TreeMap<>(stationDistanceComparator);
+    stationsNonVisitees.putAll(distances);
+
+
+    //Set<Troncon> sortants = listeDAdjacence.tronconsSortants(stationDepart);
+
 
     // au secour
 
