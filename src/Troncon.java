@@ -14,12 +14,12 @@ public class Troncon {
 
     @Override
     public String toString() {
-        return "Troncon{" +
-                "ligne=" + ligne +
-                ", depart='" + depart + '\'' +
-                ", arrivee='" + arrivee + '\'' +
-                ", duree=" + duree +
-                '}';
+        return "Troncon[" +
+                "départ='" + depart + '\'' +
+                ", arrivée='" + arrivee + '\'' +
+                ", durée=" + duree +
+                ", ligne=" + ligne +
+                ']';
     }
 
     public Station getDepart() {

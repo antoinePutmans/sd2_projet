@@ -26,9 +26,21 @@ public class ListeDAdjacence {
         for (Troncon troncon : correspondanceStationsTroncons.get(a1)) {
             if (troncon.getArrivee().equals(a2)) return true;
         }
-        for (Troncon flight : correspondanceStationsTroncons.get(a2)) {
-            if (flight.getArrivee().equals(a2)) return true;
+        for (Troncon troncon : correspondanceStationsTroncons.get(a2)) {
+            if (troncon.getArrivee().equals(a2)) return true;
         }
         return false;
+    }
+
+    public Troncon getTroncon(Station source, Station destination) {
+        Set<Troncon> tronconsSortants = this.tronconsSortants(source);
+        if (tronconsSortants != null) {
+            for (Troncon troncon : tronconsSortants) {
+                if (troncon.getArrivee().equals(destination)) {
+                    return troncon;
+                }
+            }
+        }
+        return null;
     }
 }
