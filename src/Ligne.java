@@ -1,11 +1,11 @@
 public class Ligne {
 
-    private int id;
-    private String numero;
-    private String premiereStation;
-    private String destination;
-    private String type;
-    private int tempsAttenteMoyen;
+    private final int id;
+    private final String numero;
+    private final String premiereStation;
+    private final String destination;
+    private final String type;
+    private final int tempsAttenteMoyen;
 
 
     public Ligne(int id, String numero, String premiereStation, String destination, String type, int tempsAttenteMoyen) {

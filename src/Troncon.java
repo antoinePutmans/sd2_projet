@@ -1,9 +1,9 @@
 public class Troncon {
 
-    private Ligne ligne;
-    private Station depart;
-    private Station arrivee;
-    private int duree;
+    private final Ligne ligne;
+    private final Station depart;
+    private final Station arrivee;
+    private final int duree;
 
     public Troncon(Ligne ligne, Station depart, Station arrivee, int duree) {
         this.ligne = ligne;
