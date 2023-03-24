@@ -6,10 +6,8 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class Graph {
@@ -44,9 +42,15 @@ public class Graph {
     }
     scan.close();
 
-
   }
 
+  /**
+   * Trouve UN chemin (parmi plusieurs possibles) de la Station de départ à la station d'arrivée
+   * en le moins de tronçons possibles. Algorithme utilisé = BFS
+   *
+   * @param depart Station de départ (String)
+   * @param arrivee Station d'arrivée (String)
+   */
   public void calculerCheminMinimisantNombreTroncons(String depart, String arrivee) {
     Station stationDep = new Station(depart);
     Station stationArr = new Station(arrivee);
@@ -84,6 +88,7 @@ public class Graph {
       Troncon troncon = listeDAdjacence.getTroncon(stationSource, stationCourante);
         if (cheminInverse.isEmpty()
             || (!troncon.getLigne().equals(cheminInverse.peekFirst().getLigne()))) {
+          // Je regarde si il y a un changement de ligne. Si oui, j'ajoute son temps d'attente moyen à la durée totale.
             dureeTotale += troncon.getLigne().getTempsAttenteMoyen();
         }
       cheminInverse.push(troncon);
@@ -101,13 +106,18 @@ public class Graph {
 
   }
 
+  /**
+   * Trouve le chemin minimisant le temps de transport en utilisant l'algorithme de Dijkstra.
+   *
+   * @param depart Station de départ (String)
+   * @param arrivee Station d'arrivée (String)
+   */
   public void calculerCheminMinimisantTempsTransport(String depart, String arrivee) {
-    // LA REPONSE DE DIJKSTRA
     Station stationDepart = new Station(depart);
     Station stationArrivee = new Station(arrivee);
-    // Set<Station> stationsVisitees = new HashSet<>();
 
-    Map<Station,Troncon> arriveeSource = new HashMap<>();
+    // Map utilisé pour retracer le chemin parcouru pour le plus court chemin
+    Map<Station,Troncon> precedents = new HashMap<>();
 
     Map<Station,Integer> distances = new HashMap<>(); // les distances entre départ et Station...
     distances.put(stationDepart,0);
@@ -125,37 +135,42 @@ public class Graph {
       }
     };
 
-    // utilisation de treemap pour retrouver le sommet au cout minimal directement
-    // a chaque changement dans TreeSet je dois d'abord le retirer, performer le changement dans distances et le réajouter dans TreeSet
-    // prof a dit que maj provisoire=maj def en meme temps
-    TreeSet<Station> etiquettesProvisoires = new TreeSet<>(stationDistanceComparator);
+    // utilisation de TreeMap pour retrouver le sommet au cout minimal directement
+    // TreeSet "etiquettesProvisoires" & Hashmap "distances" doivent être manipulées en même temps
+    TreeSet<Station> etiquettesProvisoires = new TreeSet<>(stationDistanceComparator); // stations non encore visitées
+    etiquettesProvisoires.add(stationDepart);
 
-
-    Map<Station, Integer> etiquettesDefinitives = new HashMap<>();
-
-
+    Map<Station, Integer> etiquettesDefinitives = new HashMap<>(); // stations déjà visitées
+    etiquettesDefinitives.put(stationDepart,0);
 
     while (!etiquettesProvisoires.isEmpty()){ // parcourir tous les elements de mes etiquettes provisoires
-      Station stationCourante = etiquettesProvisoires.first(); // valeur mini distance PAUL
-      // a chaque changement dans TreeSet je dois d'abord le retirer, performer le changement dans distances et le réajouter dans TreeSet
-      etiquettesProvisoires.remove(stationCourante); // 2
+      Station stationCourante = etiquettesProvisoires.first();
+
+      etiquettesProvisoires.remove(stationCourante);
       int distance = distances.get(stationCourante);
+
+      if ((stationCourante != stationDepart) && etiquettesDefinitives.containsKey(stationCourante)) continue;
 
       etiquettesDefinitives.put(stationCourante,distance);
 
 
       if (stationCourante.equals(stationArrivee)) break; // si je trouve mon Sommet d'arrivée je sors
 
-      for (Troncon t : listeDAdjacence.tronconsSortants(stationCourante)){ // pour tous les adjacents de Courant (PAUL: GDM)
+      Set<Troncon> tronconsSortants = listeDAdjacence.tronconsSortants(stationCourante);
+      for (Troncon t : tronconsSortants){ // pour tous les adjacents de Courant (PAUL: GDM)
         Station stationAdjacente = t.getArrivee(); // GDM
         int distanceAdd = distance + t.getDuree(); // 2 arcs : de Boileau a PAUl et PAUL a GDM
         // si la distance de BOILEAU à GDM est + grande que Boi --> Paul et Paul --> GDM : mettre a jour dans etiquettes prov GDM
-        if (distances.get(stationAdjacente) == null){
+
+
+        // Pour résoudre ce problème, vous devez retirer la station adjacente de etiquettesProvisoires, mettre à jour la distance et la réajouter à etiquettesProvisoires.
+        if (distances.get(stationAdjacente) == null){ // par extension on peut supposer qu'il n'est pas présent dans TreeSet non plus.
           distances.put(stationAdjacente,distanceAdd);
           etiquettesProvisoires.add(stationAdjacente);
         } else {
           int distanceDeDepartATronconActuel = distances.get(stationAdjacente); // 4
           if (distanceDeDepartATronconActuel > distanceAdd){
+            etiquettesProvisoires.remove(stationAdjacente);
             distances.put(stationAdjacente, distanceAdd); // mise a jour etiquettes
             etiquettesProvisoires.add(stationAdjacente);
           }
@@ -165,15 +180,9 @@ public class Graph {
 
     }
 
-    System.out.println("ALLO C Fini");
+    int distanceMin = etiquettesDefinitives.get(stationArrivee);
+    System.out.println(distanceMin);
 
-
-
-
-    //Set<Troncon> sortants = listeDAdjacence.tronconsSortants(stationDepart);
-
-
-    // au secour
 
   }
 }
