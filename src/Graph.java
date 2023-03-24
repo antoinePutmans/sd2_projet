@@ -105,7 +105,7 @@ public class Graph {
     // LA REPONSE DE DIJKSTRA
     Station stationDepart = new Station(depart);
     Station stationArrivee = new Station(arrivee);
-    Set<Station> stationsVisitees = new HashSet<>();
+    // Set<Station> stationsVisitees = new HashSet<>();
 
     Map<Station,Troncon> arriveeSource = new HashMap<>();
 
@@ -140,9 +140,9 @@ public class Graph {
       // a chaque changement dans TreeSet je dois d'abord le retirer, performer le changement dans distances et le réajouter dans TreeSet
       etiquettesProvisoires.remove(stationCourante); // 2
       int distance = distances.get(stationCourante);
+
       etiquettesDefinitives.put(stationCourante,distance);
 
-      stationsVisitees.add(stationCourante);
 
       if (stationCourante.equals(stationArrivee)) break; // si je trouve mon Sommet d'arrivée je sors
 
@@ -150,12 +150,14 @@ public class Graph {
         Station stationAdjacente = t.getArrivee(); // GDM
         int distanceAdd = distance + t.getDuree(); // 2 arcs : de Boileau a PAUl et PAUL a GDM
         // si la distance de BOILEAU à GDM est + grande que Boi --> Paul et Paul --> GDM : mettre a jour dans etiquettes prov GDM
-        if (etiquettesProvisoires.get(stationAdjacente) == null){
-          etiquettesProvisoires.put(stationAdjacente,distanceAdd);
+        if (distances.get(stationAdjacente) == null){
+          distances.put(stationAdjacente,distanceAdd);
+          etiquettesProvisoires.add(stationAdjacente);
         } else {
-          int distanceDeDepartATronconActuel = etiquettesProvisoires.get(stationAdjacente); // 4
+          int distanceDeDepartATronconActuel = distances.get(stationAdjacente); // 4
           if (distanceDeDepartATronconActuel > distanceAdd){
-            etiquettesProvisoires.put(stationAdjacente, distanceAdd); // mise a jour etiquettes
+            distances.put(stationAdjacente, distanceAdd); // mise a jour etiquettes
+            etiquettesProvisoires.add(stationAdjacente);
           }
         }
 
@@ -163,9 +165,7 @@ public class Graph {
 
     }
 
-    int distanceDepArrivee = etiquettesDefinitives.get(stationArrivee);
-    System.out.println("ALLO C CA LA DISTANCE :");
-    System.out.println(distanceDepArrivee);
+    System.out.println("ALLO C Fini");
 
 
 
