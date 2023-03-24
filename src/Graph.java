@@ -107,30 +107,67 @@ public class Graph {
     Station stationArrivee = new Station(arrivee);
     Set<Station> stationsVisitees = new HashSet<>();
 
-    Map<Station,Station> arriveeSource = new HashMap<>();
+    Map<Station,Troncon> arriveeSource = new HashMap<>();
 
     Map<Station,Integer> distances = new HashMap<>(); // les distances entre départ et Station...
-    for (Station s : stations){
-      distances.put(s, Integer.MAX_VALUE);
-    }
-    distances.put(stationDepart, 0); // départ cout 0
+    distances.put(stationDepart,0);
 
     Comparator<Station> stationDistanceComparator = (s1, s2) -> {
-      int d1 = distances.get(s1);
-      int d2 = distances.get(s2);
+      Integer d1 = distances.get(s1);
+      Integer d2 = distances.get(s2);
 
       if (d1 < d2) {
         return -1;
       } else if (d1 > d2) {
         return 1;
       } else {
-        return s1.getNom().compareTo(s2.getNom()); // en cas d'égalité des distances, le fait par nom de station
+        return s1.getNom().compareTo(s2.getNom());
       }
     };
 
-    // utilisation de treemap pour éviter de reparcourir et trouver distance minimale !
-    TreeMap<Station, Integer> stationsNonVisitees = new TreeMap<>(stationDistanceComparator);
-    stationsNonVisitees.putAll(distances);
+    // utilisation de treemap pour retrouver le sommet au cout minimal directement
+    // a chaque changement dans TreeSet je dois d'abord le retirer, performer le changement dans distances et le réajouter dans TreeSet
+    // prof a dit que maj provisoire=maj def en meme temps
+    TreeSet<Station> etiquettesProvisoires = new TreeSet<>(stationDistanceComparator);
+
+
+    Map<Station, Integer> etiquettesDefinitives = new HashMap<>();
+
+
+
+    while (!etiquettesProvisoires.isEmpty()){ // parcourir tous les elements de mes etiquettes provisoires
+      Station stationCourante = etiquettesProvisoires.first(); // valeur mini distance PAUL
+      // a chaque changement dans TreeSet je dois d'abord le retirer, performer le changement dans distances et le réajouter dans TreeSet
+      etiquettesProvisoires.remove(stationCourante); // 2
+      int distance = distances.get(stationCourante);
+      etiquettesDefinitives.put(stationCourante,distance);
+
+      stationsVisitees.add(stationCourante);
+
+      if (stationCourante.equals(stationArrivee)) break; // si je trouve mon Sommet d'arrivée je sors
+
+      for (Troncon t : listeDAdjacence.tronconsSortants(stationCourante)){ // pour tous les adjacents de Courant (PAUL: GDM)
+        Station stationAdjacente = t.getArrivee(); // GDM
+        int distanceAdd = distance + t.getDuree(); // 2 arcs : de Boileau a PAUl et PAUL a GDM
+        // si la distance de BOILEAU à GDM est + grande que Boi --> Paul et Paul --> GDM : mettre a jour dans etiquettes prov GDM
+        if (etiquettesProvisoires.get(stationAdjacente) == null){
+          etiquettesProvisoires.put(stationAdjacente,distanceAdd);
+        } else {
+          int distanceDeDepartATronconActuel = etiquettesProvisoires.get(stationAdjacente); // 4
+          if (distanceDeDepartATronconActuel > distanceAdd){
+            etiquettesProvisoires.put(stationAdjacente, distanceAdd); // mise a jour etiquettes
+          }
+        }
+
+      }
+
+    }
+
+    int distanceDepArrivee = etiquettesDefinitives.get(stationArrivee);
+    System.out.println("ALLO C CA LA DISTANCE :");
+    System.out.println(distanceDepArrivee);
+
+
 
 
     //Set<Troncon> sortants = listeDAdjacence.tronconsSortants(stationDepart);
